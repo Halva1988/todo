@@ -12,8 +12,8 @@ body {
 }
 
 .todo {
-  margin: auto auto;
-  width: 50%;
+  margin: 10% auto;
+  width: 30%;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -76,11 +76,11 @@ body {
 .todo__item {
   position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 
-  font-size: 22px;
-  line-height: 1.2;
+  font-size: 18px;
+  line-height: 20px;
 
   margin-bottom: 6px;
   padding: 5px 8px;
@@ -102,5 +102,6 @@ body {
 }
 
 .todo__remove {
+  margin-left: auto;
   cursor: pointer;
 }
