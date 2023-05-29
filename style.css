@@ -29,7 +29,6 @@ input[type=checkbox]:checked + label{
 
 .add__todo {
   width: 100%;
-  /*min-width: 150px;*/
   height: 30px;
   background-color: rgba(37, 39, 60, 1);
   border-radius: 30px;
@@ -38,8 +37,8 @@ input[type=checkbox]:checked + label{
 }
 
 .add__input {
-  margin: 8px 5px 8px 12px;
-  width: 75%;
+  margin: 8px auto 8px 12px;
+  width: 80%;
   background-color: inherit;
   border: none;
   color: rgba(255, 255, 255, 0.7);
@@ -52,7 +51,7 @@ input[type=checkbox]:checked + label{
 .add__button {
   background: url("./asset/img/Arrow.png") no-repeat center rgba(90, 255, 49, 0.6);
   background-size: 50%;
-  width: 25%;
+  width: 20%;
   height: 100%;
 
   border: none;
@@ -75,11 +74,10 @@ input[type=checkbox]:checked + label{
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  /*min-width: 141px;*/
   width: 100%;
 
   background: #25273C;
-  border-radius: 2%;
+  border-radius: 8px 8px 0 0;
 }
 
 .todo__item {
@@ -93,6 +91,34 @@ input[type=checkbox]:checked + label{
 
   margin-bottom: 6px;
   padding: 5px 8px;
+}
+
+.todo__done {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.todo__done+label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.todo__done+label::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  border: 1px solid rgba(191, 86, 255, 0.79);
+  border-radius: 50%;
+  background: inherit;
+}
+
+.todo__done:checked+label::before {
+  background: linear-gradient(111.35deg, #E600FA 10.12%, rgba(82, 97, 234, 0) 82.22%) no-repeat center/cover, url("./asset/img/Check.png") no-repeat center;
+  background-size: auto, 50% 50%;
 }
 
 .todo__item::after {
