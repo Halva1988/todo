@@ -20,7 +20,7 @@ function createTodo(description, storage) {
       checkbox: false,
       description: description,
       id: storage.length,
-      time: new Date().getHours(),
+      time: new Date().getTime(),
     });
 
     setLocalStorage(storage);
@@ -30,17 +30,14 @@ function createTodo(description, storage) {
     } else {
       changeItemsFooter();
     }
-
-    listenerList();
   }
-
 }
 
-function createCheckbox(storage) {
+function createCheckbox(index) {
   const checkbox = document.createElement('input');
   checkbox.classList.add('todo__done');
   checkbox.type = 'checkbox';
-  checkbox.id = storage.length;
+  checkbox.id = index.toString();
 
   return checkbox;
 }
@@ -86,9 +83,7 @@ function renderOldTodo() {
       const todoItem = document.createElement('div');
       todoItem.classList.add('todo__item');
 
-      const checkboxEl = document.createElement('input');
-      checkboxEl.classList.add('todo__done');
-      checkboxEl.type = 'checkbox';
+      const checkboxEl = createCheckbox(index);
       checkboxEl.id = index;
       checkboxEl.checked = checkbox;
 
@@ -103,20 +98,14 @@ function renderOldTodo() {
       todoItem.appendChild(label);
       todoItem.appendChild(removeImg);
 
-      const footer = document.querySelector('.todo__footer');
-      list.insertBefore(todoItem, footer);
-
+      list.appendChild(todoItem);
     });
-
-    changeItemsFooter();
-  } else {
-    list.innerHTML = '';
   }
 }
 
 function addNewTodo(event) {
   event.preventDefault();
-  const description = document.querySelector('.add__input').value;
+  const description = document.querySelector('.add__input').value.trim();
   const storage = getLocalstorage();
 
   createTodo(description, storage);
@@ -125,7 +114,7 @@ function addNewTodo(event) {
 
 function renderFooter() {
   const storage = getLocalstorage();
-  const list = document.querySelector(".todo__list");
+  const todo = document.querySelector(".todo");
 
   const footer = document.createElement('div');
   footer.classList.add('todo__footer');
@@ -141,7 +130,7 @@ function renderFooter() {
   footer.appendChild(items);
   footer.appendChild(clear);
 
-  list.appendChild(footer);
+  todo.appendChild(footer);
 }
 
 function changeItemsFooter() {
@@ -157,42 +146,44 @@ function changeItemsFooter() {
 }
 
 function deleteAllTodo() {
+  const list = document.querySelector('.todo__list').children;
   const storage = getLocalstorage();
   storage.splice(0, storage.length);
+
+  const items = [...list];
+  items.forEach(item => item.remove())
+
   setLocalStorage(storage);
-  renderOldTodo();
+  changeItemsFooter();
 }
 
-function listenerList() {
-  const list = document.querySelector('.todo__list');
+function listenerList(elem) {
 
-  list.addEventListener('click', (event) => {
+  elem.addEventListener('click', (event) => {
     const target = event.target;
+
     if (target.classList.contains('todo__done')) {
-      const index = target.id;
       const storage = getLocalstorage();
+      const index = target.id;
       storage[index].checkbox = target.checked;
+
       target.parentNode.classList.remove('todo__item--alarm');
 
       setLocalStorage(storage);
 
     } else if (target.classList.contains('todo__remove')) {
       const index = Array.from(target.parentNode.parentNode.children).indexOf(target.parentNode);
+
       target.parentNode.remove();
 
       const storage = getLocalstorage();
 
       storage.splice(index, 1);
       setLocalStorage(storage);
+
       changeItemsFooter();
 
     } else if (target.classList.contains('todo__footer-clear')) {
-      const allChildren = list.children;
-
-      for (let i = 0; i < allChildren.length; i++) {
-        allChildren[i].remove();
-      }
-
       deleteAllTodo();
     }
   });
@@ -200,11 +191,11 @@ function listenerList() {
 
 function timer() {
   const storage = getLocalstorage();
-  const nowHours = new Date().getHours();
-  const todos = document.querySelectorAll('.todo__item')
+  const nowHours = new Date().getTime();
+  const todos = document.querySelectorAll('.todo__item');
 
   storage.forEach((todo, index) => {
-    if (!todo.checkbox && nowHours - todo.time >= 5) {
+    if (!todo.checkbox && nowHours - todo.time >= 3600000) {
       todos[index].classList.add('todo__item--alarm');
     }
   });
@@ -212,14 +203,18 @@ function timer() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('.add__todo');
+  const todo = document.querySelector('.todo');
+
   const storage = getLocalstorage();
 
   form.addEventListener('submit', addNewTodo);
+  listenerList(todo)
 
   if (storage.length > 0) {
-    renderFooter();
     renderOldTodo();
-    listenerList();
+    renderFooter();
     timer();
   }
+
+  setTimeout(timer, 60000);
 })
