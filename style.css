@@ -29,7 +29,7 @@ input[type=checkbox]:checked + label{
 
 .add__todo {
   width: 100%;
-  height: 30px;
+  height: 50px;
   background-color: rgba(37, 39, 60, 1);
   border-radius: 30px;
   display: flex;
@@ -52,6 +52,7 @@ input[type=checkbox]:checked + label{
   background: url("./asset/img/Arrow.png") no-repeat center rgba(90, 255, 49, 0.6);
   background-size: 50%;
   width: 20%;
+  max-width: 73px;
   height: 100%;
 
   border: none;
@@ -86,8 +87,8 @@ input[type=checkbox]:checked + label{
   justify-content: flex-start;
   align-items: center;
 
-  font-size: 10px;
-  line-height: 12px;
+  font-size: 15px;
+  line-height: 18px;
 
   margin-bottom: 6px;
   padding: 5px 8px;
@@ -132,7 +133,7 @@ input[type=checkbox]:checked + label{
 .todo__item::after {
   content: "";
   position: absolute;
-  bottom: 0;
+  bottom: -2px;
   left: 9%;
   width: 77%;
   height: 3px;
@@ -155,14 +156,18 @@ input[type=checkbox]:checked + label{
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 30px;
+  height: 50px;
   padding: 5px 8px;
 
-  font-size: 12px;
+  font-size: 18px;
   order: 1;
 }
 
 .todo__footer-clear {
+  width: 20%;
+  height: 100%;
+
+  font-size: 18px;
   border: none;
   background: inherit;
   color: rgba(255, 255, 255, 0.7);
