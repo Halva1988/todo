@@ -93,6 +93,14 @@ input[type=checkbox]:checked + label{
   padding: 5px 8px;
 }
 
+.todo__item--alarm:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.todo__item--alarm {
+  background: rgba(255, 0, 0, 0.15);
+}
+
 .todo__done {
   position: absolute;
   z-index: -1;
@@ -139,5 +147,24 @@ input[type=checkbox]:checked + label{
 
 .todo__remove {
   margin-left: auto;
+  cursor: pointer;
+}
+
+.todo__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+  padding: 5px 8px;
+
+  font-size: 12px;
+  order: 1;
+}
+
+.todo__footer-clear {
+  border: none;
+  background: inherit;
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
 }

@@ -19,11 +19,21 @@ function createTodo(description, storage) {
     storage.push({
       checkbox: false,
       description: description,
-      id: storage.length
+      id: storage.length,
+      time: new Date().getHours(),
     });
+
+    setLocalStorage(storage);
+
+    if (storage.length === 1) {
+      renderFooter();
+    } else {
+      changeItemsFooter();
+    }
+
+    listenerList();
   }
 
-  setLocalStorage(storage);
 }
 
 function createCheckbox(storage) {
@@ -60,7 +70,7 @@ function createRemoveImage() {
 }
 
 function setLocalStorage(data) {
-  return localStorage.setItem('todoData', JSON.stringify(data))
+  return localStorage.setItem('todoData', JSON.stringify(data));
 }
 
 function getLocalstorage() {
@@ -69,52 +79,39 @@ function getLocalstorage() {
 
 function renderOldTodo() {
   const list = document.querySelector('.todo__list');
-  list.innerHTML = '';
   const storage = getLocalstorage();
 
-  storage.forEach(({ checkbox, description }, index) => {
-    const todoItem = document.createElement('div');
-    todoItem.classList.add('todo__item');
+  if (storage.length > 0) {
+    storage.forEach(({checkbox, description}, index) => {
+      const todoItem = document.createElement('div');
+      todoItem.classList.add('todo__item');
 
-    const checkboxEl = document.createElement('input');
-    checkboxEl.classList.add('todo__done');
-    checkboxEl.type = 'checkbox';
-    checkboxEl.id = index;
-    checkboxEl.checked = checkbox;
+      const checkboxEl = document.createElement('input');
+      checkboxEl.classList.add('todo__done');
+      checkboxEl.type = 'checkbox';
+      checkboxEl.id = index;
+      checkboxEl.checked = checkbox;
 
-    const label = document.createElement('label');
-    label.setAttribute('for', index);
+      const label = document.createElement('label');
+      label.setAttribute('for', index);
 
-    const descriptionPara = createDescription(description);
-    const removeImg = createRemoveImage();
+      const descriptionPara = createDescription(description);
+      const removeImg = createRemoveImage();
 
-    label.appendChild(descriptionPara);
-    todoItem.appendChild(checkboxEl);
-    todoItem.appendChild(label);
-    todoItem.appendChild(removeImg);
+      label.appendChild(descriptionPara);
+      todoItem.appendChild(checkboxEl);
+      todoItem.appendChild(label);
+      todoItem.appendChild(removeImg);
 
-    list.appendChild(todoItem);
-  });
+      const footer = document.querySelector('.todo__footer');
+      list.insertBefore(todoItem, footer);
 
-  list.addEventListener('click', (event) => {
-    const target = event.target;
-    if (target.classList.contains('todo__done')) {
-      const index = target.id;
-      const storage = getLocalstorage();
-      storage[index].checkbox = target.checked;
+    });
 
-      setLocalStorage(storage);
-    } else if (target.classList.contains('todo__remove')) {
-      const index = Array.from(target.parentNode.parentNode.children).indexOf(target.parentNode);
-
-      target.parentNode.remove();
-
-      const storage = getLocalstorage();
-
-      storage.splice(index, 1);
-      setLocalStorage(storage);
-    }
-  });
+    changeItemsFooter();
+  } else {
+    list.innerHTML = '';
+  }
 }
 
 function addNewTodo(event) {
@@ -126,9 +123,103 @@ function addNewTodo(event) {
   event.target.reset();
 }
 
+function renderFooter() {
+  const storage = getLocalstorage();
+  const list = document.querySelector(".todo__list");
+
+  const footer = document.createElement('div');
+  footer.classList.add('todo__footer');
+
+  const items = document.createElement('div');
+  items.classList.add('todo__footer-items');
+  items.textContent = `${storage.length} items`;
+
+  const clear = document.createElement('button');
+  clear.classList.add('todo__footer-clear');
+  clear.textContent = 'Clear';
+
+  footer.appendChild(items);
+  footer.appendChild(clear);
+
+  list.appendChild(footer);
+}
+
+function changeItemsFooter() {
+  const storage = getLocalstorage();
+  const footer = document.querySelector('.todo__footer');
+  const items = document.querySelector('.todo__footer-items');
+
+  items.textContent = `${storage.length} items`;
+
+  if (storage.length < 1) {
+    footer.remove();
+  }
+}
+
+function deleteAllTodo() {
+  const storage = getLocalstorage();
+  storage.splice(0, storage.length);
+  setLocalStorage(storage);
+  renderOldTodo();
+}
+
+function listenerList() {
+  const list = document.querySelector('.todo__list');
+
+  list.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target.classList.contains('todo__done')) {
+      const index = target.id;
+      const storage = getLocalstorage();
+      storage[index].checkbox = target.checked;
+      target.parentNode.classList.remove('todo__item--alarm');
+
+      setLocalStorage(storage);
+
+    } else if (target.classList.contains('todo__remove')) {
+      const index = Array.from(target.parentNode.parentNode.children).indexOf(target.parentNode);
+      target.parentNode.remove();
+
+      const storage = getLocalstorage();
+
+      storage.splice(index, 1);
+      setLocalStorage(storage);
+      changeItemsFooter();
+
+    } else if (target.classList.contains('todo__footer-clear')) {
+      const allChildren = list.children;
+
+      for (let i = 0; i < allChildren.length; i++) {
+        allChildren[i].remove();
+      }
+
+      deleteAllTodo();
+    }
+  });
+}
+
+function timer() {
+  const storage = getLocalstorage();
+  const nowHours = new Date().getHours();
+  const todos = document.querySelectorAll('.todo__item')
+
+  storage.forEach((todo, index) => {
+    if (!todo.checkbox && nowHours - todo.time >= 5) {
+      todos[index].classList.add('todo__item--alarm');
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('.add__todo');
+  const storage = getLocalstorage();
+
   form.addEventListener('submit', addNewTodo);
 
-  renderOldTodo();
+  if (storage.length > 0) {
+    renderFooter();
+    renderOldTodo();
+    listenerList();
+    timer();
+  }
 })
