@@ -33,7 +33,7 @@ body {
 
 .add__input {
   margin: 8px auto 8px 12px;
-  width: 80%;
+  width: 100%;
   background-color: inherit;
   border: none;
   color: rgba(255, 255, 255, 0.7);
