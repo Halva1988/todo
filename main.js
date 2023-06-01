@@ -33,11 +33,12 @@ function createTodo(description, storage) {
   }
 }
 
-function createCheckbox(index) {
+function createCheckbox() {
+  const storage = getLocalstorage();
   const checkbox = document.createElement('input');
   checkbox.classList.add('todo__done');
   checkbox.type = 'checkbox';
-  checkbox.id = index.toString();
+  checkbox.id = storage.length;
 
   return checkbox;
 }
@@ -83,7 +84,7 @@ function renderOldTodo() {
       const todoItem = document.createElement('div');
       todoItem.classList.add('todo__item');
 
-      const checkboxEl = createCheckbox(index);
+      const checkboxEl = createCheckbox();
       checkboxEl.id = index;
       checkboxEl.checked = checkbox;
 
