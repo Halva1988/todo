@@ -17,12 +17,6 @@ function createTodo(description, storage) {
     container.appendChild(todoItem);
 
     popupDeadline(description, checkbox, storage);
-
-    if (storage.length === 0) {
-      renderFooter();
-    } else {
-      changeItemsFooter();
-    }
   }
 }
 
@@ -117,7 +111,7 @@ function renderFooter() {
 
   const items = document.createElement('div');
   items.classList.add('todo__footer-items');
-  items.textContent = `${storage.length + 1} item`;
+  items.textContent = `${storage.length} item`;
 
   const clear = document.createElement('button');
   clear.classList.add('todo__footer-clear');
@@ -134,7 +128,7 @@ function changeItemsFooter() {
   const footer = document.querySelector('.todo__footer');
   const items = document.querySelector('.todo__footer-items');
 
-  items.textContent = `${storage.length + 1} items`;
+  items.textContent = `${storage.length} items`;
 
   if (storage.length < 1) {
     footer.remove();
@@ -213,15 +207,17 @@ function popupDeadline(description, checkbox) {
 
   formDeadline.addEventListener('submit', (event) => {
     event.preventDefault();
-    createObject(description, checkbox);
+    const limitTime = document.querySelector('.popupDeadline__input').value * 3600000;
 
-    divDeadLine.remove();
+    if (limitTime) {
+      createObject(description, checkbox, limitTime);
+      divDeadLine.remove();
+    }
   });
 }
 
-function createObject(description, checkbox) {
+function createObject(description, checkbox, limitTime) {
   const storage = getLocalstorage();
-  const limitTime = document.querySelector('.popupDeadline__input').value * 3600000;
 
   storage.push({
     checkbox: false,
@@ -232,6 +228,12 @@ function createObject(description, checkbox) {
   });
 
   setLocalStorage(storage);
+
+  if (storage.length === 1) {
+    renderFooter();
+  } else {
+    changeItemsFooter();
+  }
 }
 
 function timer() {
