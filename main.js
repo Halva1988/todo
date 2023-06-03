@@ -111,7 +111,7 @@ function renderFooter() {
 
   const items = document.createElement('div');
   items.classList.add('todo__footer-items');
-  items.textContent = `${storage.length} item`;
+  items.textContent = `${storage.length} ${storage.length === 1 ? "item" : "items"}`;
 
   const clear = document.createElement('button');
   clear.classList.add('todo__footer-clear');
@@ -128,7 +128,7 @@ function changeItemsFooter() {
   const footer = document.querySelector('.todo__footer');
   const items = document.querySelector('.todo__footer-items');
 
-  items.textContent = `${storage.length} items`;
+  items.textContent = `${storage.length} ${storage.length === 1 ? "item" : "items"}`;
 
   if (storage.length < 1) {
     footer.remove();
