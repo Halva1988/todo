@@ -17,6 +17,12 @@ function createTodo(description, storage) {
     container.appendChild(todoItem);
 
     popupDeadline(description, checkbox, storage);
+
+    if (storage.length === 0) {
+      renderFooter();
+    } else {
+      changeItemsFooter();
+    }
   }
 }
 
@@ -111,7 +117,7 @@ function renderFooter() {
 
   const items = document.createElement('div');
   items.classList.add('todo__footer-items');
-  items.textContent = `${storage.length} ${storage.length === 1 ? "item" : "items"}`;
+  items.textContent = `${storage.length + 1} item`;
 
   const clear = document.createElement('button');
   clear.classList.add('todo__footer-clear');
@@ -128,7 +134,7 @@ function changeItemsFooter() {
   const footer = document.querySelector('.todo__footer');
   const items = document.querySelector('.todo__footer-items');
 
-  items.textContent = `${storage.length} items`;
+  items.textContent = `${storage.length + 1} items`;
 
   if (storage.length < 1) {
     footer.remove();
@@ -182,7 +188,7 @@ function listenerList(elem) {
   });
 }
 
-function popupDeadline(description, checkbox, storage) {
+function popupDeadline(description, checkbox) {
   const todo = document.querySelector('.todo');
   const formDeadline = document.createElement('form');
   const inputDeadLine = document.createElement('input');
@@ -209,14 +215,8 @@ function popupDeadline(description, checkbox, storage) {
     event.preventDefault();
     createObject(description, checkbox);
 
-    if (storage.length === 1) {
-      renderFooter();
-    } else {
-      changeItemsFooter();
-    }
-
     divDeadLine.remove();
-  })
+  });
 }
 
 function createObject(description, checkbox) {
