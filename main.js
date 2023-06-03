@@ -16,20 +16,7 @@ function createTodo(description, storage) {
     todoItem.appendChild(removeImg);
     container.appendChild(todoItem);
 
-    storage.push({
-      checkbox: false,
-      description: description,
-      id: checkbox.id,
-      time: new Date().getTime(),
-    });
-
-    setLocalStorage(storage);
-
-    if (storage.length === 1) {
-      renderFooter();
-    } else {
-      changeItemsFooter();
-    }
+    popupDeadline(description, checkbox, storage);
   }
 }
 
@@ -38,7 +25,6 @@ function generateRandomId() {
 }
 
 function createCheckbox() {
-  const storage = getLocalstorage();
   const checkbox = document.createElement('input');
   checkbox.classList.add('todo__done');
   checkbox.type = 'checkbox';
@@ -196,13 +182,65 @@ function listenerList(elem) {
   });
 }
 
+function popupDeadline(description, checkbox, storage) {
+  const todo = document.querySelector('.todo');
+  const formDeadline = document.createElement('form');
+  const inputDeadLine = document.createElement('input');
+  const buttonDeadLine = document.createElement('button');
+  const divDeadLine = document.createElement('div');
+
+  divDeadLine.classList.add('popup')
+  formDeadline.classList.add('add__todo', 'popupDeadline');
+
+  inputDeadLine.classList.add('add__input', 'popupDeadline__input');
+  inputDeadLine.type = 'number';
+  inputDeadLine.setAttribute('min', '1');
+  inputDeadLine.placeholder = 'How many hours to work?';
+
+  buttonDeadLine.classList.add('add__button', 'popupDeadline__button');
+
+  formDeadline.appendChild(inputDeadLine);
+  formDeadline.appendChild(buttonDeadLine);
+  divDeadLine.appendChild(formDeadline);
+  document.body.insertBefore(divDeadLine, todo);
+  inputDeadLine.focus();
+
+  formDeadline.addEventListener('submit', (event) => {
+    event.preventDefault();
+    createObject(description, checkbox);
+
+    if (storage.length === 1) {
+      renderFooter();
+    } else {
+      changeItemsFooter();
+    }
+
+    divDeadLine.remove();
+  })
+}
+
+function createObject(description, checkbox) {
+  const storage = getLocalstorage();
+  const limitTime = document.querySelector('.popupDeadline__input').value * 3600000;
+
+  storage.push({
+    checkbox: false,
+    description: description,
+    id: checkbox.id,
+    time: new Date().getTime(),
+    limit: limitTime,
+  });
+
+  setLocalStorage(storage);
+}
+
 function timer() {
   const storage = getLocalstorage();
   const nowHours = new Date().getTime();
   const todos = document.querySelectorAll('.todo__item');
 
   storage.forEach((todo, index) => {
-    if (!todo.checkbox && nowHours - todo.time >= 3600000) {
+    if (!todo.checkbox && nowHours - todo.time >= todo.limit) {
       todos[index].classList.add('todo__item--alarm');
     }
   });
